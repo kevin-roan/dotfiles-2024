@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# wall=$(find ~/Pictures/Wallpaper/wal/ -type f -name "*.jpg" -o -name "*.png" | shuf -n 1)
+
+# wall=$(find ~/Pictures/Wallpaper/wal/ -type f -name "*.jpg" -o -name "*.png" | shuf --random-source=/dev/urandom -n 1)
+wall=$(find ~/Pictures/Wallpaper/wal/ -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" -o -name "*.gif" -o -name "*.bmp" \) | shuf --random-source=/dev/urandom -n 1)
+xwallpaper --zoom $wall
+wal -c 
+wal -i $wall
+
+xdotool key super+F5
+
+

@@ -1,0 +1,3 @@
+#!/bin/sh
+scrcpy -Sw -b8M -m1920 --forward-all-clicks
+#scrcpy --serial 5203aebfe89b4333 

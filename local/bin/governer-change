@@ -1,0 +1,16 @@
+#!/bin/bash
+
+tlpmode()
+{
+  mode=$(tlp-stat -s | grep "Mode" | awk '{print $3}')
+if [ "$mode" == "battery" ]; then
+  echo "Power"
+  sudo tlp auto 
+else 
+  echo "Perf"
+  sudo tlp bat
+fi
+  exit 0
+}
+
+tlpmode

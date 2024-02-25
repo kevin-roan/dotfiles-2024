@@ -1,0 +1,73 @@
+#!/bin/bash
+
+## Statusbar
+memory ()
+{
+  mem=$(free -h | awk '/Mem:/ { print $3 }' | cut -f1 -d 'i')
+  echo  ' '$mem
+  exit 0
+}
+
+ volume ()
+ {
+   vol=$(amixer get Master | tail -n1 | sed -r 's/.*\[(.*)%\].*/\1/')
+   echo $vol
+   exit 0
+ }
+
+battery ()
+{
+  bat=$(acpi | awk '{if ($4 == "charging,") { print "100%"} else { print $4 }}' | tr -d ',')
+  echo  ' '$bat
+  exit 0
+}
+
+temp()
+{
+  temp=$(sensors | awk '/Core 0/ {print $3}')
+  echo  $temp
+  exit 0
+}
+tlpmode()
+{
+  mode=$(tlp-stat -s | grep "Mode" | awk '{print $3}')
+if [ "$mode" == "battery" ]; then
+  echo "Power"
+else 
+  echo "Perf"
+fi
+  exit 0
+}
+
+nettraf ()
+{
+case $BLOCK_BUTTON in
+	1) setsid -f "$TERMINAL" -e bmon ;;
+	3) notify-send "🌐 Network traffic module" "🔻: Traffic received
+🔺: Traffic transmitted" ;;
+	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+update() {
+    sum=0
+    for arg; do
+        read -r i < "$arg"
+        sum=$(( sum + i ))
+    done
+    cache=/tmp/${1##*/}
+    [ -f "$cache" ] && read -r old < "$cache" || old=0
+    printf %d\\n "$sum" > "$cache"
+    printf %d\\n $(( sum - old ))
+}
+
+rx=$(update /sys/class/net/[ew]*/statistics/rx_bytes)
+tx=$(update /sys/class/net/[ew]*/statistics/tx_bytes)
+# printf " %4sB %4sB\\n" $(numfmt --to=iec $rx $tx)
+printf "  %4sB\\n" $(numfmt --to=iec $rx)
+}
+
+while true; do
+  xsetroot -name "$(memory) | $(battery) $(tlpmode) | $(temp) | $(date +"%I:%M") | $(nettraf)"
+  sleep 1s
+done &
+
