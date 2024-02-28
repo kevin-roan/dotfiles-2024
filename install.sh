@@ -15,4 +15,5 @@ cd ../st
 sudo make clean install
 pwd 
 cd ../.. 
+cp tlp.conf /etc/
 mv ./config ~/.config
